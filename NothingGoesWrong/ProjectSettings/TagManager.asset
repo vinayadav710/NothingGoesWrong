@@ -7,6 +7,8 @@ TagManager:
   - CinemachineTarget
   - A
   - CCTV
+  - Reactor
+  - Monster
   layers:
   - Default
   - TransparentFX
@@ -15,11 +17,11 @@ TagManager:
   - Water
   - UI
   - Interactable
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Wall
+  - Player
+  - playermarker
+  - CCTV
+  - exitarea
   - 
   - 
   - 

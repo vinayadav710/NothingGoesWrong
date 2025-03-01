@@ -46,16 +46,58 @@ public class InteractionSystem : MonoBehaviour
     private void Update()
     {
         HandleInteractionRaycast();
-        
+
         if (Input.GetKeyDown(KeyCode.E) && currentInteractable != null)
         {
             selectedInteractable = currentInteractable;
 
+            // Specific handling for Reactor interactions
+            if (currentInteractable.CompareTag("Reactor"))
+            {
+                ReactorController reactorController = currentInteractable.GetComponent<ReactorController>();
+                if (reactorController != null)
+                {
+                    if (reactorController.IsMalfunctioning)
+                    {
+                        reactorController.FixReactor();
+                    }
+                    else
+                    {
+                        Debug.Log("Reactor is already fixed.");
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning("No ReactorController found on Reactor object.");
+                }
+            }
+            // Specific handling for Monster interactions
+            else if (currentInteractable.CompareTag("Monster"))
+            {
+                MonsterController monsterController = currentInteractable.GetComponent<MonsterController>();
+                if (monsterController != null)
+                {
+                    if (monsterController.IsAngry)
+                    {
+                        monsterController.FeedMonster();
+                    }
+                    else
+                    {
+                        Debug.Log("Monster is already calm.");
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning("No MonsterController found on Monster object.");
+                }
+            }
+
+            // Old functionality: Trigger animations based on the taggedUIElements list
             foreach (var taggedUI in taggedUIElements)
             {
                 if (taggedUI.tag == currentInteractable.tag)
                 {
-                    // Trigger **all** animations for this interactable
+                    // Trigger all animations for this interactable
                     foreach (var animPair in taggedUI.animations)
                     {
                         if (animPair.targetAnimator != null && !string.IsNullOrEmpty(animPair.triggerName))
@@ -118,26 +160,24 @@ public class InteractionSystem : MonoBehaviour
         }
     }
 
-
     public void OnAnimationEventChangeColor()
-{
-    if (selectedInteractable != null && selectedTaggedObject.HasValue)
     {
-        Renderer renderer = selectedInteractable.GetComponent<Renderer>();
-        if (renderer != null)
+        if (selectedInteractable != null && selectedTaggedObject.HasValue)
         {
-            renderer.material.color = new Color(Random.value, Random.value, Random.value);
-            Debug.Log($"Changed color of {selectedInteractable.name} to {renderer.material.color}");
+            Renderer renderer = selectedInteractable.GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                renderer.material.color = new Color(Random.value, Random.value, Random.value);
+                Debug.Log($"Changed color of {selectedInteractable.name} to {renderer.material.color}");
+            }
+            else
+            {
+                Debug.LogWarning("Selected interactable does not have a Renderer component.");
+            }
         }
         else
         {
-            Debug.LogWarning("Selected interactable does not have a Renderer component.");
+            Debug.LogWarning("No selected interactable or tagged object to change color.");
         }
     }
-    else
-    {
-        Debug.LogWarning("No selected interactable or tagged object to change color.");
-    }
-}
-
 }
